@@ -1,0 +1,56 @@
+﻿@model IEnumerable<MyWallet.Services.Dtos.HistoryLine>
+
+@{
+    ViewData["Title"] = "Транзакции";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Транзакции</h1>
+
+<p>
+    <a asp-action="Create">Добавить транзакцию</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Категория</th>
+            <th>
+                Название
+            </th>
+            <th>
+                Сумма
+            </th>
+            <th>
+                Тип
+            </th>
+            <th>
+                Дата
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <span class="badge" style="background-color:@item.Category.Color">@item.Category.Name</span>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

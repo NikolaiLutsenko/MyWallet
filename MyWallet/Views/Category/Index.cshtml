@@ -1,0 +1,44 @@
+﻿@model IEnumerable<MyWallet.Services.Dtos.Category>
+
+@{
+    ViewData["Title"] = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>View</h1>
+
+<p>
+    <a asp-action="Create">Добавить</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Категория
+            </th>
+            <th>
+                Родительская категория
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    <h3><span class="badge" style="background-color:@item.Color">@Html.DisplayFor(modelItem => item.Name)</span></h3>
+                </td>
+                <td>
+                    @if(item.Parrent != null)
+                    {
+                        <h4><span class="badge" style="background-color:@item.Parrent.Color">@item.Parrent.Name</span></h4>
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,35 @@
+﻿@model MyWallet.Models.ChartModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <canvas id="myChart" width="200" height="200"></canvas>
+</div>
+
+@section Scripts{
+    <script>
+        var obj =  @(Html.Raw(Json.Serialize(Model)));
+
+        const data = {
+          labels: obj.labels,
+          datasets: [
+          {
+            label: 'My First Dataset',
+            data: obj.amounts,
+            backgroundColor: obj.colors,
+            hoverOffset: 4
+          }
+        ]
+        };
+
+        const config = {
+          type: 'pie',
+          data: data,
+        };
+
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, config);
+	</script>
+}
