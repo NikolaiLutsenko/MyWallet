@@ -26,7 +26,7 @@ class WalletInfoChart {
 
         this.fillTableInfo(chartInfo);
 
-        var ctx = this.chartElem.getContext('2d');
+        var ctx = this.chartElem.getContext('2d'); 
         this.chart = new Chart(ctx, config);
     }
 
