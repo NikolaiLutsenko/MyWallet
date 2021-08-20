@@ -4,32 +4,93 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <canvas id="myChart" width="200" height="200"></canvas>
+    <h3 id="dataSetName" class="display-4">@Model.DataSetLabel</h3>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <canvas id="myChart" width="200" height="200"></canvas>
+            </div>
+            <div class="col">
+                <div class="container">
+                    <div class="mb-3 row">
+                        <label for="inputFrom" class="col-sm-2 col-form-label">С:</label>
+                        <div class="col-sm-10">
+                            <input type="date" class="form-control" id="inputFrom" />
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="inputTo" class="col-sm-2 col-form-label">До:</label>
+                        <div class="col-sm-10">
+                            <input type="date" class="form-control" id="inputTo" />
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="inputCategory" class="col-sm-2 col-form-label">Категория:</label>
+                        <div class="col-sm-10">
+                            <select id="categoryId" asp-items="ViewBag.Categories" class="form-control">
+                                <option value="">Все</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <button id="showButton" type="submit" class="btn btn-primary">Отобразить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts{
-    <script>
+<script>
         var obj =  @(Html.Raw(Json.Serialize(Model)));
+        var myChart = buildChart(obj);
 
-        const data = {
-          labels: obj.labels,
-          datasets: [
-          {
-            label: 'My First Dataset',
-            data: obj.amounts,
-            backgroundColor: obj.colors,
-            hoverOffset: 4
-          }
-        ]
-        };
+        var fromElem = document.getElementById('inputFrom');
+        var toElem = document.getElementById('inputTo');
+        var categoryElem = document.getElementById('categoryId');
+        var dataSetNameElem = document.getElementById('dataSetName');
+        document.getElementById('showButton').addEventListener('click', ()=>
+        {
 
-        const config = {
-          type: 'pie',
-          data: data,
-        };
+            $.ajax({
+              type: "POST",
+              url: '@Url.Action("Index")',
+              data:
+              {
+                  from: fromElem.value,
+                  to: toElem.value,
+                  categoryId: categoryElem.value
+              },
+              success: function(data)
+              {
+                myChart.destroy();
+                dataSetNameElem.innerHTML = data.dataSetLabel;
+                myChart = buildChart(data);
+              },
+              dataType: 'json'
+            });
+        });
 
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var myChart = new Chart(ctx, config);
-	</script>
+        function buildChart(chartInfo){
+            const data = {
+              labels: chartInfo.labels,
+              datasets: [
+              {
+                label: chartInfo.dataSetLabel,
+                data: chartInfo.amounts,
+                backgroundColor: chartInfo.colors,
+                hoverOffset: 4
+              }]
+            };
+
+            const config = {
+              type: 'pie',
+              data: data,
+            };
+
+            var ctx = document.getElementById('myChart').getContext('2d');
+            return new Chart(ctx, config);
+        }
+</script>
 }

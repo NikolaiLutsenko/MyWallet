@@ -7,6 +7,7 @@ using MyWallet.Services.Dtos;
 using MyWallet.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -41,6 +42,7 @@ namespace MyWallet.Services
         {
             var lines = await _db.HistoryLines
                 .Include(x => x.Category)
+                .OrderByDescending(x => x.Date)
                 .ToArrayAsync();
 
             return _mapper.Map<HistoryLine[]>(lines);

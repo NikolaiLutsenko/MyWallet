@@ -26,12 +26,12 @@
         @foreach (var item in Model) {
             <tr>
                 <td>
-                    <h3><span class="badge" style="background-color:@item.Color">@Html.DisplayFor(modelItem => item.Name)</span></h3>
+                    <h4><span class="badge" style="background-color:@item.Color">@Html.DisplayFor(modelItem => item.Name)</span></h4>
                 </td>
                 <td>
                     @if(item.Parrent != null)
                     {
-                        <h4><span class="badge" style="background-color:@item.Parrent.Color">@item.Parrent.Name</span></h4>
+                        <h5><span class="badge" style="background-color:@item.Parrent.Color">@item.Parrent.Name</span></h5>
                     }
                 </td>
                 <td>

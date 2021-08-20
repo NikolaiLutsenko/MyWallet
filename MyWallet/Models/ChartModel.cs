@@ -7,5 +7,6 @@
         public decimal[] Amounts { get; set; }
 
         public string[] Colors { get; set; }
+        public string DataSetLabel { get; set; }
     }
 }

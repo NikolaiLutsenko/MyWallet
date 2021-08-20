@@ -7,6 +7,7 @@ using MyWallet.Services.Dtos;
 using MyWallet.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyWallet.Services
@@ -50,6 +51,7 @@ namespace MyWallet.Services
 			var categories = await _db.Categories
 				.Include(x => x.Parrent)
 				.Include(x => x.Child)
+				.OrderBy(x => x.ParrentId)
 				.ToArrayAsync();
 
 			return _mapper.Map<Category[]>(categories);
