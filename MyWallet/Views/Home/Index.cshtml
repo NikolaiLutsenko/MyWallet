@@ -4,24 +4,25 @@
 }
 
 <div class="text-center">
-    <h3 id="dataSetName" class="display-4">@Model.DataSetLabel</h3>
+    <h3 id="dataSetName" class="display-4"></h3>
     <div class="container">
         <div class="row">
             <div class="col">
                 <canvas id="myChart" width="200" height="200"></canvas>
             </div>
             <div class="col">
+                <!-- Filters -->
                 <div class="container">
                     <div class="mb-3 row">
-                        <label for="inputFrom" class="col-sm-2 col-form-label">С:</label>
+                        <label asp-for="From" class="col-sm-2 col-form-label"></label>
                         <div class="col-sm-10">
-                            <input type="date" class="form-control" id="inputFrom" />
+                            <input asp-for="From" class="form-control" />
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label for="inputTo" class="col-sm-2 col-form-label">До:</label>
+                        <label asp-for="To" class="col-sm-2 col-form-label"></label>
                         <div class="col-sm-10">
-                            <input type="date" class="form-control" id="inputTo" />
+                            <input asp-for="To" class="form-control" />
                         </div>
                     </div>
                     <div class="mb-3 row">
@@ -32,8 +33,23 @@
                             </select>
                         </div>
                     </div>
+                </div>
+                <!-- Table with info -->
+                <div class="container">
                     <div class="mb-3 row">
-                        <button id="showButton" type="submit" class="btn btn-primary">Отобразить</button>
+                        <hr />
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Процент</th>
+                                    <th>Сумма</th>
+                                </tr>
+                            </thead>
+                            <tbody id="info-body">
+
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -42,15 +58,24 @@
 </div>
 
 @section Scripts{
+<script src="~/js/home.js" asp-append-version="true"></script>
 <script>
-        var obj =  @(Html.Raw(Json.Serialize(Model)));
-        var myChart = buildChart(obj);
-
-        var fromElem = document.getElementById('inputFrom');
-        var toElem = document.getElementById('inputTo');
+        var fromElem = document.getElementById('From');
+        var toElem = document.getElementById('To');
         var categoryElem = document.getElementById('categoryId');
         var dataSetNameElem = document.getElementById('dataSetName');
-        document.getElementById('showButton').addEventListener('click', ()=>
+        var tableElem = document.getElementById('info-body');
+        var chartElem = document.getElementById('myChart');
+
+        var obj =  @(Html.Raw(Json.Serialize(Model)));
+        var myChart = new WalletInfoChart(chartElem, tableElem, dataSetNameElem);
+        myChart.build(obj);
+
+        categoryElem.addEventListener('change', reloadChart);
+        fromElem.addEventListener('change', reloadChart);
+        toElem.addEventListener('change', reloadChart);
+
+        function reloadChart()
         {
 
             $.ajax({
@@ -64,33 +89,10 @@
               },
               success: function(data)
               {
-                myChart.destroy();
-                dataSetNameElem.innerHTML = data.dataSetLabel;
-                myChart = buildChart(data);
+                myChart.reload(data);
               },
               dataType: 'json'
             });
-        });
-
-        function buildChart(chartInfo){
-            const data = {
-              labels: chartInfo.labels,
-              datasets: [
-              {
-                label: chartInfo.dataSetLabel,
-                data: chartInfo.amounts,
-                backgroundColor: chartInfo.colors,
-                hoverOffset: 4
-              }]
-            };
-
-            const config = {
-              type: 'pie',
-              data: data,
-            };
-
-            var ctx = document.getElementById('myChart').getContext('2d');
-            return new Chart(ctx, config);
         }
 </script>
 }
