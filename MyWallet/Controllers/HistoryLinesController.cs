@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MyWallet.Extensions;
 using MyWallet.Models;
 using MyWallet.Services.Interfaces;
 using System;
@@ -7,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyWallet.Controllers
 {
+    [Authorize]
     public class HistoryLinesController : Controller
     {
         private readonly IHistoryLinesService _historyLinesService;
@@ -19,14 +22,16 @@ namespace MyWallet.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var lines = await _historyLinesService.GetAll();
+            var userId = User.GetCurrentUserId();
+            var lines = await _historyLinesService.GetAll(userId);
             return View(lines);
         }
 
         [HttpGet]
         public async Task<IActionResult> Create([FromServices] ICategoryService categoryService)
         {
-            var categories = await categoryService.GetAll();
+            var userId = User.GetCurrentUserId();
+            var categories = await categoryService.GetAll(userId);
             return View(new CreateHistoryLine
             {
                 Categories = new SelectList(categories, "Id", "Name")

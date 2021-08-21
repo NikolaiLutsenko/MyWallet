@@ -53,10 +53,20 @@ class WalletInfoChart {
             trElem.appendChild(tdElem2);
 
             var tdElem3 = document.createElement('td');
-            tdElem3.innerHTML = amount;
+            tdElem3.innerHTML = amount + ' UAH';
             trElem.appendChild(tdElem3);
 
             tableElem.appendChild(trElem);
         }
+
+        var trElemTotal = document.createElement('tr');
+        trElemTotal.appendChild(document.createElement('td'));
+        trElemTotal.appendChild(document.createElement('td'));
+
+        var tdElemTotalSum = document.createElement('td');
+        tdElemTotalSum.innerHTML = total + ' UAH';
+        trElemTotal.appendChild(tdElemTotalSum);
+
+        this.tableElem.appendChild(trElemTotal);
     }
 }

@@ -33,16 +33,17 @@ namespace MyWallet.Services
                 Amount = amount,
                 CategoryId = categoryId,
                 Type = OperationType.Credit,
-                Date = DateTime.Now
+                Date = DateTime.Now.Date
             });
             await _db.SaveChangesAsync();
         }
 
-        public async Task<IReadOnlyCollection<HistoryLine>> GetAll()
+        public async Task<IReadOnlyCollection<HistoryLine>> GetAll(string userId)
         {
             var lines = await _db.HistoryLines
                 .Include(x => x.Category)
                 .OrderByDescending(x => x.Date)
+                .Where(x => x.Category.IdentityUserId == userId)
                 .ToArrayAsync();
 
             return _mapper.Map<HistoryLine[]>(lines);

@@ -11,6 +11,6 @@ namespace MyWallet.Services.Interfaces
 
         Task Remove(Guid id);
 
-        Task<IReadOnlyCollection<HistoryLine>> GetAll();
+        Task<IReadOnlyCollection<HistoryLine>> GetAll(string userId);
     }
 }

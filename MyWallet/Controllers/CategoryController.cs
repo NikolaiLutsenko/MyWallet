@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MyWallet.Extensions;
 using MyWallet.Models;
 using MyWallet.Services.Interfaces;
 using System;
@@ -8,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace MyWallet.Controllers
 {
+    [Authorize]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
@@ -20,14 +23,16 @@ namespace MyWallet.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var categories = await _categoryService.GetAll();
+            var userId = User.GetCurrentUserId();
+            var categories = await _categoryService.GetAll(userId);
             return View(categories);
         }
 
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var categories = await _categoryService.GetAll();
+            var userId = User.GetCurrentUserId();
+            var categories = await _categoryService.GetAll(userId);
             return View(new CreateCategory
             {
                 Categories = new SelectList(categories, "Id", "Name")
@@ -39,10 +44,11 @@ namespace MyWallet.Controllers
         {
             if (!ModelState.IsValid) return RedirectToAction(nameof(Create));
 
+            var userId = User.GetCurrentUserId();
             if (!model.Id.HasValue)
-                await _categoryService.Add(model.Name, model.Color, model.ParrentId);
+                await _categoryService.Add(userId, model.Name, model.Color, model.ParrentId);
             else
-                await _categoryService.Update(model.Id.Value, model.Name, model.Color, model.ParrentId);
+                await _categoryService.Update(userId, model.Id.Value, model.Name, model.Color, model.ParrentId);
 
             return RedirectToAction(nameof(Index));
         }
@@ -50,7 +56,8 @@ namespace MyWallet.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var categories = await _categoryService.GetAll();
+            var userId = User.GetCurrentUserId();
+            var categories = await _categoryService.GetAll(userId);
             var editCategory = categories.SingleOrDefault(x => x.Id == id);
 
             return View(nameof(Create), new CreateCategory
@@ -65,7 +72,8 @@ namespace MyWallet.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _categoryService.Remove(id);
+            var userId = User.GetCurrentUserId();
+            await _categoryService.Remove(userId, id);
             return RedirectToAction(nameof(Index));
         }
     }

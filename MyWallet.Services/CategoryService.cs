@@ -12,73 +12,75 @@ using System.Threading.Tasks;
 
 namespace MyWallet.Services
 {
-	class CategoryService : ICategoryService
-	{
-		private readonly IMapper _mapper;
-		private readonly MyWalletContext _db;
-		private readonly ILogger<CategoryService> _logger;
+    class CategoryService : ICategoryService
+    {
+        private readonly IMapper _mapper;
+        private readonly MyWalletContext _db;
+        private readonly ILogger<CategoryService> _logger;
 
-		public CategoryService(IMapper mapper, MyWalletContext db, ILogger<CategoryService> logger)
-		{
-			_mapper = mapper;
-			_db = db;
-			_logger = logger;
-		}
+        public CategoryService(IMapper mapper, MyWalletContext db, ILogger<CategoryService> logger)
+        {
+            _mapper = mapper;
+            _db = db;
+            _logger = logger;
+        }
 
-		public async Task<Category> Add(string name, string color, Guid? parrent = null)
-		{
-			var id = Guid.NewGuid();
-			_db.Categories.Add(new CategoryEntity
-			{
-				Id = id,
-				Color = color,
-				Label = name,
-				ParrentId = parrent
-			});
+        public async Task<Category> Add(string userId, string name, string color, Guid? parrent = null)
+        {
+            var id = Guid.NewGuid();
+            _db.Categories.Add(new CategoryEntity
+            {
+                Id = id,
+                Color = color,
+                Label = name,
+                ParrentId = parrent,
+                IdentityUserId = userId
+            });
 
-			await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
 
-			var category = await _db.Categories
-				.Include(x => x.Parrent)
-				.Include(x => x.Child)
-				.SingleOrDefaultAsync(x => x.Id == id);
+            var category = await _db.Categories
+                .Include(x => x.Parrent)
+                .Include(x => x.Child)
+                .SingleOrDefaultAsync(x => x.Id == id);
 
-			return _mapper.Map<Category>(category);
-		}
+            return _mapper.Map<Category>(category);
+        }
 
-		public async Task<IReadOnlyCollection<Category>> GetAll()
-		{
-			var categories = await _db.Categories
-				.Include(x => x.Parrent)
-				.Include(x => x.Child)
-				.OrderBy(x => x.ParrentId)
-				.ToArrayAsync();
+        public async Task<IReadOnlyCollection<Category>> GetAll(string userId)
+        {
+            var categories = await _db.Categories
+                .Include(x => x.Parrent)
+                .Include(x => x.Child).AsSplitQuery()
+                .OrderBy(x => x.ParrentId)
+                .Where(x => x.IdentityUserId == userId)
+                .ToArrayAsync();
 
-			return _mapper.Map<Category[]>(categories);
-		}
+            return _mapper.Map<Category[]>(categories);
+        }
 
-		public async Task Remove(Guid id)
-		{
-			var category = await _db.Categories.FindAsync(id);
+        public async Task Remove(string userId, Guid id)
+        {
+            var category = await _db.Categories.FindAsync(id);
 
-			if (category == null) return;
+            if (category == null || category.IdentityUserId != userId) return;
 
-			_db.Categories.Remove(category);
+            _db.Categories.Remove(category);
 
-			await _db.SaveChangesAsync();
-		}
+            await _db.SaveChangesAsync();
+        }
 
-		public async Task Update(Guid id, string name, string color, Guid? parrent)
-		{
-			var category = await _db.Categories.FindAsync(id);
+        public async Task Update(string userId, Guid id, string name, string color, Guid? parrent)
+        {
+            var category = await _db.Categories.FindAsync(id);
 
-			if (category == null) return;
+            if (category == null || category.IdentityUserId != userId) return;
 
-			category.Label = name;
-			category.ParrentId = parrent;
-			category.Color = color;
+            category.Label = name;
+            category.ParrentId = parrent;
+            category.Color = color;
 
-			await _db.SaveChangesAsync();
-		}
-	}
+            await _db.SaveChangesAsync();
+        }
+    }
 }
