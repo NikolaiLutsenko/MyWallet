@@ -8,6 +8,7 @@ using MyWallet.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -38,15 +39,29 @@ namespace MyWallet.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task<IReadOnlyCollection<HistoryLine>> GetAll(string userId)
+        public async Task<IReadOnlyCollection<HistoryLine>> GetAll(string userId, DateTime? from = null, DateTime? to = null, Guid? categoryId = null)
         {
             var lines = await _db.HistoryLines
                 .Include(x => x.Category)
                 .OrderByDescending(x => x.Date)
                 .Where(x => x.Category.IdentityUserId == userId)
+                .Where(DateRangePredicate())
+                .Where(CategoryPredicate())
                 .ToArrayAsync();
 
             return _mapper.Map<HistoryLine[]>(lines);
+
+            Expression<Func<HistoryLineEntity, bool>> DateRangePredicate()
+            {
+                return (x) =>
+                    from.HasValue ? x.Date.Date >= from.Value.Date : false ||
+                    !to.HasValue || x.Date.Date <= to.Value.Date;
+            }
+
+            Expression<Func<HistoryLineEntity, bool>> CategoryPredicate()
+            {
+                return (x) => !categoryId.HasValue || x.CategoryId == categoryId.Value || x.Category.Parrent.Id == categoryId.Value;
+            }
         }
 
         public async Task Remove(Guid id)

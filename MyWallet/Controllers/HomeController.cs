@@ -31,7 +31,9 @@ namespace MyWallet.Controllers
         {
             var from = DateTime.Now.Date.AddDays(-DateTime.Now.Day + 1);
             var to = DateTime.Now.Date;
+
             var chartInfo = await chartService.GetChart(from, to);
+
             var userId = User.GetCurrentUserId();
             var categories = (await _categoryService.GetAll(userId))
                 .Where(x => x.Parrent == null && x.Child.Any())

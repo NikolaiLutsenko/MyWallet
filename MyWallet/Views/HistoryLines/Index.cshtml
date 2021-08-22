@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MyWallet.Services.Dtos.HistoryLine>
+﻿@model HistoryLinesModel
 
 @{
     ViewData["Title"] = "Транзакции";
@@ -10,47 +10,79 @@
 <p>
     <a asp-action="Create">Добавить транзакцию</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Категория</th>
-            <th>
-                Название
-            </th>
-            <th>
-                Сумма
-            </th>
-            <th>
-                Тип
-            </th>
-            <th>
-                Дата
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                <span class="badge" style="background-color:@item.Category.Color">@item.Category.Name</span>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Amount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
-            </td>
-        </tr>
+<div class="row">
+    <div class="col-9">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Категория</th>
+                    <th>
+                        Название
+                    </th>
+                    <th>
+                        Сумма
+                    </th>
+                    <th>
+                        Тип
+                    </th>
+                    <th>
+                        Дата
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                <partial name="_HistoryLines.cshtml" for="Lines" />
+            </tbody>
+        </table>
+    </div>
+    <div class="col-3">
+        <div class="container">
+            <div class="mb-3 row">
+                <label asp-for="From" class="col-form-label"></label>
+                <input asp-for="From" class="form-control" />
+            </div>
+            <div class="mb-3 row">
+                <label asp-for="To" class="col-form-label"></label>
+                <input asp-for="To" class="form-control" />
+            </div>
+            <div class="mb-3 row">
+                <label asp-for="CategoryId" class="col-form-label">Категория:</label>
+                <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-control">
+                    <option value="">Все</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<script>
+    var fromElem = document.getElementById('From');
+    var toElem = document.getElementById('To');
+    var categoryElem = document.getElementById('CategoryId');
+    var tbodyElem = document.getElementById('tbody');
+
+    fromElem.addEventListener('change', filterChanged);
+    toElem.addEventListener('change', filterChanged);
+    categoryElem.addEventListener('change', filterChanged);
+
+    function filterChanged(){
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Index")',
+            data:
+            {
+                from: fromElem.value,
+                to: toElem.value,
+                categoryId: categoryElem.value
+            },
+            success: function(data)
+            {
+              tbodyElem.innerHTML = data;
+            },
+            dataType: 'html'
+        });
+    }
+</script>
 }
-    </tbody>
-</table>

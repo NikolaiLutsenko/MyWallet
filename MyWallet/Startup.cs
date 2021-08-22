@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyWallet.Data;
+using MyWallet.Extensions;
 using MyWallet.Services.Extensions;
 using System;
 
@@ -24,36 +25,9 @@ namespace MyWallet
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connection = Configuration.GetConnectionString("DefaultConnection");
-
-            services.AddDbContext<MyWalletContext>(options =>
-                options.UseMySql(
-                    connection,
-                     new MySqlServerVersion(new Version(8, 0, 23)),
-                     mySqlOptions => mySqlOptions.MigrationsAssembly("MyWallet.Data")
-                )
-            );
-
             services
-                .AddIdentity<IdentityUser, IdentityRole>(options =>
-                {
-                    options.SignIn.RequireConfirmedAccount = false;
-
-                    options.Password.RequiredLength = 5;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequireDigit = false;
-                })
-                .AddEntityFrameworkStores<MyWalletContext>();
-
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-                });
-
-            services.AddServices();
+                .AddInfrastructureServices(Configuration)
+                .AddServices();
             services.AddControllersWithViews();
         }
 
