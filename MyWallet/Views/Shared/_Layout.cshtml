@@ -22,13 +22,16 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Статистика</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Месяц</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="HistoryLines" asp-action="Index">Транзакции</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Категории</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Statistic" asp-action="Index">Статистика</a>
                         </li>
                     </ul>
                     <form class="d-flex">
@@ -59,11 +62,20 @@
         </nav>
     </header>
 
-    <div class="container">
-        <main role="main">
-            @RenderBody()
-        </main>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-3">
+                @await RenderSectionAsync("LeftBar", required:false)
+            </div>
+            <div class="col-6">
+                @RenderBody()
+            </div>
+            <div class="col-3" style="padding-top:25px">
+                @await RenderSectionAsync("RightBar", required:false)
+            </div>
+        </div>
     </div>
+
 
     <footer class="border-top footer text-muted">
         <div class="container">

@@ -1,0 +1,28 @@
+﻿@model IEnumerable<MyWallet.Models.StatisticItemModel>
+
+@foreach (var item in Model)
+{
+    var cssClass = "table-light";
+    if (item.Percent != 0 && item.Percent <= 100)
+    {
+        cssClass = "table-success";
+    }
+    if (item.Percent > 100)
+    {
+        cssClass = "table-danger";
+    }
+    <tr class="@cssClass">
+        <td>
+            @Html.DisplayFor(modelItem => item.Label)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PrevAmount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CurrentAmount)
+        </td>
+        <td>
+            % @Html.DisplayFor(modelItem => item.Percent)
+        </td>
+    </tr>
+}

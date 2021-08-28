@@ -29,12 +29,9 @@ namespace MyWallet.Controllers
         [HttpGet]
         public async Task<IActionResult> Index([FromServices] IChartService chartService)
         {
-            var from = DateTime.Now.Date.AddDays(-DateTime.Now.Day + 1);
-            var to = DateTime.Now.Date;
-
-            var chartInfo = await chartService.GetChart(from, to);
-
             var userId = User.GetCurrentUserId();
+            var chartInfo = await chartService.GetChart(userId, DateRange.Month);
+
             var categories = (await _categoryService.GetAll(userId))
                 .Where(x => x.Parrent == null && x.Child.Any())
                 .ToArray();
@@ -45,19 +42,21 @@ namespace MyWallet.Controllers
                 Labels = chartInfo.Labels,
                 Colors = chartInfo.Colors,
                 Amounts = chartInfo.Amounts,
-                From = from,
-                To = to
+                From = DateRange.Month.From,
+                To = DateRange.Month.To
             });
         }
 
         [HttpPost]
         public async Task<IActionResult> Index(
             [FromServices] IChartService chartService,
-            DateTime? from,
-            DateTime? to,
+            DateTime from,
+            DateTime to,
             Guid? categoryId)
         {
-            var chartInfo = await chartService.GetChart(from, to, categoryId);
+            var userId = User.GetCurrentUserId();
+            var dateRange = new DateRange(from, to);
+            var chartInfo = await chartService.GetChart(userId, dateRange, categoryId);
             return Ok(new ChartModel
             {
                 DataSetLabel = chartInfo.DataSetLabel,

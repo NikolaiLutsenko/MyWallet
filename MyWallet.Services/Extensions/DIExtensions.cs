@@ -11,7 +11,8 @@ namespace MyWallet.Services.Extensions
 			services
 				.AddScoped<ICategoryService, CategoryService>()
 				.AddScoped<IHistoryLinesService, HistoryLinesService>()
-				.AddScoped< IChartService, ChartService>();
+				.AddScoped<IChartService, ChartService>()
+				.AddScoped<IStatisticService, StatisticService>();
 			services.AddAutoMapper(typeof(CategoryProfile).Assembly);
 			return services;
 		}

@@ -1,4 +1,5 @@
-﻿using MyWallet.Services.Dtos;
+﻿using MyWallet.Models;
+using MyWallet.Services.Dtos;
 using System;
 using System.Threading.Tasks;
 
@@ -6,6 +7,6 @@ namespace MyWallet.Services.Interfaces
 {
     public interface IChartService
     {
-        Task<ChartModel> GetChart(DateTime? from = null, DateTime? to = null, Guid? categoryId = null);
+        Task<ChartModel> GetChart(string userId, DateRange dateRange, Guid? categoryId = null);
     }
 }

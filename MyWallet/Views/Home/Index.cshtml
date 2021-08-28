@@ -11,29 +11,6 @@
                 <canvas id="myChart" width="200" height="200"></canvas>
             </div>
             <div class="col">
-                <!-- Filters -->
-                <div class="container">
-                    <div class="mb-3 row">
-                        <label asp-for="From" class="col-sm-2 col-form-label"></label>
-                        <div class="col-sm-10">
-                            <input asp-for="From" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label asp-for="To" class="col-sm-2 col-form-label"></label>
-                        <div class="col-sm-10">
-                            <input asp-for="To" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label for="inputCategory" class="col-sm-2 col-form-label">Категория:</label>
-                        <div class="col-sm-10">
-                            <select id="categoryId" asp-items="ViewBag.Categories" class="form-control">
-                                <option value="">Все</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
                 <!-- Table with info -->
                 <div class="container">
                     <div class="mb-3 row">
@@ -47,7 +24,6 @@
                                 </tr>
                             </thead>
                             <tbody id="info-body">
-
                             </tbody>
                         </table>
                     </div>
@@ -57,41 +33,71 @@
     </div>
 </div>
 
+@section RightBar{
+<div class="text-center">
+    <h2>Фильтры:</h2>
+    <!-- Filters -->
+    <div class="container">
+        <div class="mb-4 row">
+            <label asp-for="From" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <input asp-for="From" class="form-control" />
+            </div>
+        </div>
+        <div class="mb-4 row">
+            <label asp-for="To" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <input asp-for="To" class="form-control" />
+            </div>
+        </div>
+        <div class="mb-4 row">
+            <label for="inputCategory" class="col-sm-2 col-form-label">Категория:</label>
+            <div class="col-sm-10">
+                <select id="categoryId" asp-items="ViewBag.Categories" class="form-control">
+                    <option value="">Все</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+}
+
 @section Scripts{
 <script src="~/js/home.js" asp-append-version="true"></script>
 <script>
-        var fromElem = document.getElementById('From');
-        var toElem = document.getElementById('To');
-        var categoryElem = document.getElementById('categoryId');
-        var dataSetNameElem = document.getElementById('dataSetName');
-        var tableElem = document.getElementById('info-body');
-        var chartElem = document.getElementById('myChart');
+    var fromElem = document.getElementById('From');
+    var toElem = document.getElementById('To');
+    var categoryElem = document.getElementById('categoryId');
+    var dataSetNameElem = document.getElementById('dataSetName');
+    var tableElem = document.getElementById('info-body');
+    var chartElem = document.getElementById('myChart');
 
-        var obj =  @(Html.Raw(Json.Serialize(Model)));
-        var myChart = new WalletInfoChart(chartElem, tableElem, dataSetNameElem);
-        myChart.build(obj);
+    var obj =  @(Html.Raw(Json.Serialize(Model)));
+    var myChart = new WalletInfoChart(chartElem, tableElem, dataSetNameElem);
+    myChart.build(obj);
 
-        categoryElem.addEventListener('change', reloadChart);
-        fromElem.addEventListener('change', reloadChart);
-        toElem.addEventListener('change', reloadChart);
+    categoryElem.addEventListener('change', reloadChart);
+    fromElem.addEventListener('change', reloadChart);
+    toElem.addEventListener('change', reloadChart);
 
-        function reloadChart()
-        {
-            $.ajax({
-              type: "POST",
-              url: '@Url.Action("Index")',
-              data:
-              {
-                  from: fromElem.value,
-                  to: toElem.value,
-                  categoryId: categoryElem.value
-              },
-              success: function(data)
-              {
-                myChart.reload(data);
-              },
-              dataType: 'json'
-            });
-        }
+    function reloadChart()
+    {
+        $.ajax({
+          type: "POST",
+          url: '@Url.Action("Index")',
+          data:
+          {
+              from: fromElem.value,
+              to: toElem.value,
+              categoryId: categoryElem.value
+          },
+          success: function(data)
+          {
+            myChart.reload(data);
+          },
+          dataType: 'json'
+        });
+    }
 </script>
 }

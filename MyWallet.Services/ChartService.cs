@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyWallet.Data;
 using MyWallet.Data.Entities;
+using MyWallet.Models;
 using MyWallet.Services.Dtos;
 using MyWallet.Services.Interfaces;
 using System;
@@ -18,12 +19,12 @@ namespace MyWallet.Services
             _db = db;
         }
 
-        public async Task<ChartModel> GetChart(DateTime? from = null, DateTime? to = null, Guid? categoryId = null)
+        public async Task<ChartModel> GetChart(string userId, DateRange dateRange, Guid? categoryId = null)
         {
             var categories = await _db.Categories
                 .Include(x => x.HistoryLines)
                 .Include(x => x.Child).ThenInclude(x => x.HistoryLines).AsSplitQuery()
-                .Where(x => categoryId.HasValue ? x.Id == categoryId.Value : !x.ParrentId.HasValue)
+                .Where(x => x.IdentityUserId == userId && categoryId.HasValue ? x.Id == categoryId.Value : !x.ParrentId.HasValue)
                 .ToArrayAsync();
 
             if (!categoryId.HasValue)
@@ -44,18 +45,14 @@ namespace MyWallet.Services
 
                 return new ChartModel(
                     category.Label,
-                    grouped.Select(x => x.Key.Label).Union(new string[] { category.Label }).ToArray(),
-                    grouped.Select(x => x.Sum()).Union(new decimal[] { other }).ToArray(),
-                    grouped.Select(x => x.Key.Color).Union(new string[] { category.Color }).ToArray());
+                    grouped.Select(x => x.Key.Label).Concat(new string[] { category.Label }).ToArray(),
+                    grouped.Select(x => x.Sum()).Concat(new decimal[] { other }).ToArray(),
+                    grouped.Select(x => x.Key.Color).Concat(new string[] { category.Color }).ToArray());
             }
 
             
 
-            bool IsInDateRange(HistoryLineEntity line)
-            {
-                return (from.HasValue ? line.Date.Date >= from.Value.Date : true) &&
-                (to.HasValue ? line.Date.Date <= to.Value.Date : true);
-            }
+            bool IsInDateRange(HistoryLineEntity line) => line.Date.Date >= dateRange.From && line.Date.Date <= dateRange.To.Date;
         }
     }
 }

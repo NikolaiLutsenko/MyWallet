@@ -1,0 +1,93 @@
+﻿@model IEnumerable<MyWallet.Models.StatisticItemModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Label)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PrevAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CurrentAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Percent)
+            </th>
+        </tr>
+    </thead>
+    <tbody id="tbody">
+        <partial name="_Statistic" model="Model"> 
+    </tbody>
+</table>
+
+@section RightBar{
+<div class="text-center">
+    <h2>Фильтры:</h2>
+    <!-- Filters -->
+    <div class="container">
+        <div class="mb-4 row">
+            <label class="col-sm-2 col-form-label">Диапозон:</label>
+            <div class="col-sm-10">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-info active">
+                        <input type="radio" name="range" id="btnradio1" value="1" autocomplete="off" checked> День
+                    </label>
+                    <label class="btn btn-info">
+                        <input type="radio" name="range" id="btnradio2" value="2" autocomplete="off"> Неделя
+                    </label>
+                    <label class="btn btn-info">
+                        <input type="radio" name="range" id="btnradio3" value="3" autocomplete="off"> Месяц
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="mb-4 row">
+            <label for="categoryId" class="col-sm-2 col-form-label">Категория:</label>
+            <div class="col-sm-10">
+                <select id="categoryId" asp-items="ViewBag.Categories" class="form-control">
+                    <option value="">Все</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+@section Scripts{
+<script src="~/js/home.js" asp-append-version="true"></script>
+<script>
+    var categoryElem = document.getElementById('categoryId');
+    categoryElem.addEventListener('change', reloadTable);
+    $(document).on('change', 'input:radio[name=range]', reloadTable);
+    var tbodyElem = document.getElementById('tbody');
+
+    function reloadTable()
+    {
+        var rangeVal = $("input[name=range]:checked").val();
+
+        $.ajax({
+          type: "POST",
+          url: '@Url.Action("Index")',
+          data:
+          {
+              rangeType: rangeVal,
+              categoryId: categoryElem.value
+          },
+          success: function(data)
+          {
+            tbodyElem.innerHTML = data
+          },
+          dataType: 'html'
+        });
+    }
+</script>
+}
