@@ -28,12 +28,21 @@ namespace MyWallet.Models
 
         public static DateRange PrevDay => new(Day.From.AddDays(-1), Day.From.AddDays(-1));
 
-        public static DateRange Week => new(DateTime.Now.Date.AddDays(-((int)DateTime.Now.Date.DayOfWeek-1)), DateTime.Now.Date);
+        public static DateRange Week => new(DateTime.Now.Date.AddDays(-ToNormalDayOfWeek(DateTime.Now.Date.DayOfWeek)+1), DateTime.Now.Date);
 
         public static DateRange PrevWeek => new(Week.From.AddDays(-7), Week.From.AddDays(-1));
 
         public static DateRange Month => new(DateTime.Now.Date.AddDays(-DateTime.Now.Day + 1), DateTime.Now.Date);
 
         public static DateRange PrevMonth => new(Month.From.AddMonths(-1), Month.From.AddDays(-1));
+
+        private static int ToNormalDayOfWeek(DayOfWeek dayOfWeek)
+        {
+            return dayOfWeek switch
+            {
+                DayOfWeek.Sunday => 7,
+                _ => (int)dayOfWeek
+            };
+        }
     }
 }
