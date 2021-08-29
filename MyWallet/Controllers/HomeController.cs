@@ -36,14 +36,12 @@ namespace MyWallet.Controllers
                 .Where(x => x.Parrent == null && x.Child.Any())
                 .ToArray();
             ViewBag.Categories = new SelectList(categories, "Id", "Name");
-            return View(new ChartModel
+            return View(new ChartModel(DateRange.Month)
             {
                 DataSetLabel = chartInfo.DataSetLabel,
                 Labels = chartInfo.Labels,
                 Colors = chartInfo.Colors,
-                Amounts = chartInfo.Amounts,
-                From = DateRange.Month.From,
-                To = DateRange.Month.To
+                Amounts = chartInfo.Amounts
             });
         }
 
@@ -57,7 +55,7 @@ namespace MyWallet.Controllers
             var userId = User.GetCurrentUserId();
             var dateRange = new DateRange(from, to);
             var chartInfo = await chartService.GetChart(userId, dateRange, categoryId);
-            return Ok(new ChartModel
+            return Ok(new ChartModel(new DateRange(from, to))
             {
                 DataSetLabel = chartInfo.DataSetLabel,
                 Labels = chartInfo.Labels,

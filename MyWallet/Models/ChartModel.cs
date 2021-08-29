@@ -5,6 +5,13 @@ namespace MyWallet.Models
 {
     public class ChartModel
     {
+        private readonly DateRange _dateRange;
+
+        public ChartModel(DateRange dateRange)
+        {
+            _dateRange = dateRange;
+        }
+
         public string[] Labels { get; set; }
 
         public decimal[] Amounts { get; set; }
@@ -14,10 +21,10 @@ namespace MyWallet.Models
 
         [Display(Name = "C:")]
         [DataType(DataType.Date)]
-        public DateTime? From { get; set; }
+        public DateTime? From => _dateRange.From;
 
         [Display(Name = "До:")]
         [DataType(DataType.Date)]
-        public DateTime? To { get; set; }
+        public DateTime? To => _dateRange.To;
     }
 }

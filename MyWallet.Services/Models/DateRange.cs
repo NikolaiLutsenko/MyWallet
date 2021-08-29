@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace MyWallet.Models
 {
@@ -18,6 +20,12 @@ namespace MyWallet.Models
 
             _from = from;
             _to = to;
+        }
+
+        internal IEnumerable<object> GetFields()
+        {
+            yield return From;
+            yield return To;
         }
 
         public DateTime From => _from;
@@ -44,5 +52,19 @@ namespace MyWallet.Models
                 _ => (int)dayOfWeek
             };
         }
+
+        public static bool operator ==(DateRange left, DateRange right) => left.Equals(right);
+
+        public static bool operator !=(DateRange left, DateRange right) => !left.Equals(right);
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not DateRange targetObj)
+                return false;
+
+            return GetFields().SequenceEqual(targetObj.GetFields());
+        }
+
+        public override int GetHashCode() => string.Join("|", GetFields().Select(x => x.ToString())).GetHashCode();
     }
 }
