@@ -1,4 +1,5 @@
-﻿using MyWallet.Services.Dtos;
+﻿using MyWallet.Models;
+using MyWallet.Services.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,6 +12,6 @@ namespace MyWallet.Services.Interfaces
 
         Task Remove(Guid id);
 
-        Task<IReadOnlyCollection<HistoryLine>> GetAll(string userId, DateTime? from = null, DateTime? to = null, Guid? categoryId = null);
+        Task<IReadOnlyCollection<HistoryLine>> GetAll(string userId, DateRange dateRange = default, Guid? categoryId = null);
     }
 }

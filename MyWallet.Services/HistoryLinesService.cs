@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MyWallet.Data;
 using MyWallet.Data.Entities;
 using MyWallet.Data.Enums;
+using MyWallet.Models;
 using MyWallet.Services.Dtos;
 using MyWallet.Services.Interfaces;
 using System;
@@ -39,7 +40,7 @@ namespace MyWallet.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task<IReadOnlyCollection<HistoryLine>> GetAll(string userId, DateTime? from = null, DateTime? to = null, Guid? categoryId = null)
+        public async Task<IReadOnlyCollection<HistoryLine>> GetAll(string userId, DateRange dateRange = default, Guid? categoryId = null)
         {
             var lines = await _db.HistoryLines
                 .Include(x => x.Category)
@@ -53,9 +54,8 @@ namespace MyWallet.Services
 
             Expression<Func<HistoryLineEntity, bool>> DateRangePredicate()
             {
-                return (x) =>
-                    from.HasValue ? x.Date.Date >= from.Value.Date : false ||
-                    !to.HasValue || x.Date.Date <= to.Value.Date;
+                return (x) => dateRange.HasFrom ? x.Date.Date >= dateRange.From : false
+                 || !dateRange.HasTo || x.Date.Date <= dateRange.To;
             }
 
             Expression<Func<HistoryLineEntity, bool>> CategoryPredicate()

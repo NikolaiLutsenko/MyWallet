@@ -53,7 +53,7 @@ namespace MyWallet.Controllers
             Guid? categoryId)
         {
             var userId = User.GetCurrentUserId();
-            var lines = await _historyLinesService.GetAll(userId, from, to, categoryId);
+            var lines = await _historyLinesService.GetAll(userId, new DateRange(from.Value, to.Value), categoryId);
 
             return PartialView("_HistoryLines", _mapper.Map<HistoryLineModel[]>(lines));
         }

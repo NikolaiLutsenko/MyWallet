@@ -1,0 +1,49 @@
+﻿@model MyWallet.Models.ChartModel
+@{
+    var total = Model.Amounts.Sum();
+    var infos = Enumerable
+        .Range(0, Model.Labels.Length)
+        .ToDictionary(i => Model.Labels[i], i => Model.Amounts[i]);
+}
+
+<table class="table table-hover">
+    <thead class="thead-light">
+        <tr>
+            <th>Название</th>
+            <th>Процент</th>
+            <th>Сумма</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var info in infos.OrderByDescending(x => x.Value))
+        {
+            <tr>
+                <td class="text-left">@info.Key</td>
+                <td>@Math.Round(info.Value / (total / 100)) %</td>
+                <td>@info.Value UAH</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<table class="table table-hover">
+    <thead class="thead-light">
+        <tr>
+            <th>Название</th>
+            <th>Сумма</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-left">Среднее в день</td>
+            <th>@Math.Round(Model.AveragePerDay, 2) UAH</th>
+        </tr>
+        <tr>
+            <td class="text-left">Медиана</td>
+            <th>@Math.Round(Model.Mediana, 2) UAH</th>
+        </tr>
+        <tr>
+            <th class="text-left">Всего</th>
+            <th>@total UAH</th>
+        </tr>
+    </tbody>
+</table>

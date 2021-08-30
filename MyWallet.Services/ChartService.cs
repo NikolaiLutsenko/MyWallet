@@ -52,7 +52,9 @@ namespace MyWallet.Services
 
             
 
-            bool IsInDateRange(HistoryLineEntity line) => line.Date.Date >= dateRange.From && line.Date.Date <= dateRange.To.Date;
+            bool IsInDateRange(HistoryLineEntity line) => 
+                dateRange.HasFrom ? line.Date.Date >= dateRange.From : true
+                && dateRange.HasTo ? line.Date.Date <= dateRange.To.Date : true;
         }
     }
 }

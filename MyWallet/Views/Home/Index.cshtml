@@ -13,20 +13,7 @@
             <div class="col">
                 <!-- Table with info -->
                 <div class="container">
-                    <div class="mb-3 row">
-                        <hr />
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Название</th>
-                                    <th>Процент</th>
-                                    <th>Сумма</th>
-                                </tr>
-                            </thead>
-                            <tbody id="info-body">
-                            </tbody>
-                        </table>
-                    </div>
+                    <div class="mb-3 row" id="table-info"></div>
                 </div>
             </div>
         </div>
@@ -81,6 +68,8 @@
     fromElem.addEventListener('change', reloadChart);
     toElem.addEventListener('change', reloadChart);
 
+    $( document ).ready(loadTable);
+
     function reloadChart()
     {
         $.ajax({
@@ -97,6 +86,26 @@
             myChart.reload(data);
           },
           dataType: 'json'
+        });
+
+        loadTable();
+    }
+
+    function loadTable(){
+        $.ajax({
+          type: "GET",
+          url: '@Url.Action("TableInfo")',
+          data:
+          {
+              from: fromElem.value,
+              to: toElem.value,
+              categoryId: categoryElem.value
+          },
+          success: function(data)
+          {
+            document.getElementById('table-info').innerHTML = data;
+          },
+          dataType: 'html'
         });
     }
 </script>

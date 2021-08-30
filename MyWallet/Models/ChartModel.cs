@@ -19,6 +19,8 @@ namespace MyWallet.Models
         public string[] Colors { get; set; }
         public string DataSetLabel { get; set; }
 
+        public decimal AveragePerDay { get; set; }
+
         [Display(Name = "C:")]
         [DataType(DataType.Date)]
         public DateTime? From => _dateRange.From;
@@ -26,5 +28,7 @@ namespace MyWallet.Models
         [Display(Name = "До:")]
         [DataType(DataType.Date)]
         public DateTime? To => _dateRange.To;
+
+        public decimal Mediana { get; set; }
     }
 }

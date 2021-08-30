@@ -8,10 +8,10 @@ namespace MyWallet.Models
     [DebuggerDisplay("From = {From}, To = {To}")]
     public struct DateRange
     {
-        private readonly DateTime _from;
-        private readonly DateTime _to;
+        private readonly DateTime? _from;
+        private readonly DateTime? _to;
 
-        public DateRange(DateTime from, DateTime to)
+        public DateRange(DateTime? from, DateTime? to)
         {
             if (from == default) throw new ArgumentException(nameof(from));
             if (to == default) throw new ArgumentException(nameof(to));
@@ -28,9 +28,13 @@ namespace MyWallet.Models
             yield return To;
         }
 
-        public DateTime From => _from;
+        public DateTime From => _from.Value;
 
-        public DateTime To => _to;
+        public DateTime To => _to.Value;
+
+        public bool HasFrom => _from.HasValue;
+
+        public bool HasTo => _to.HasValue;
 
         public static DateRange Day => new(DateTime.Now.Date, DateTime.Now.Date);
 
