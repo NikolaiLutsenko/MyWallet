@@ -35,7 +35,8 @@
       "publishAllPorts": true,
       "environmentVariables": {
         "MYWALLET_DB_USER_PASSWORD": "rootpassword",
-        "MYWALLET_DB_USER": "root"
+        "MYWALLET_DB_USER": "root",
+        "ASPNETCORE_URLS": "http://+:5000"
       }
     }
   }
