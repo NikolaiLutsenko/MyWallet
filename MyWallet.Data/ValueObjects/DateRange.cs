@@ -3,13 +3,22 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace MyWallet.Models
+namespace MyWallet.Data.ValueObjects
 {
     [DebuggerDisplay("From = {From}, To = {To}")]
     public struct DateRange
     {
         private readonly DateTime? _from;
         private readonly DateTime? _to;
+        private readonly bool _isEmpty;
+
+        private DateRange(bool isEmpty)
+        {
+            _from = null;
+            _to = null;
+
+            _isEmpty = isEmpty;
+        }
 
         public DateRange(DateTime? from, DateTime? to)
         {
@@ -20,6 +29,7 @@ namespace MyWallet.Models
 
             _from = from;
             _to = to;
+            _isEmpty = !from.HasValue && !to.HasValue;
         }
 
         internal IEnumerable<object> GetFields()
@@ -36,17 +46,21 @@ namespace MyWallet.Models
 
         public bool HasTo => _to.HasValue;
 
+        public bool IsEmpty() => _isEmpty;
+
         public static DateRange Day => new(DateTime.Now.Date, DateTime.Now.Date);
 
         public static DateRange PrevDay => new(Day.From.AddDays(-1), Day.From.AddDays(-1));
 
-        public static DateRange Week => new(DateTime.Now.Date.AddDays(-ToNormalDayOfWeek(DateTime.Now.Date.DayOfWeek)+1), DateTime.Now.Date);
+        public static DateRange Week => new(DateTime.Now.Date.AddDays(-ToNormalDayOfWeek(DateTime.Now.Date.DayOfWeek) + 1), DateTime.Now.Date);
 
         public static DateRange PrevWeek => new(Week.From.AddDays(-7), Week.From.AddDays(-1));
 
         public static DateRange Month => new(DateTime.Now.Date.AddDays(-DateTime.Now.Day + 1), DateTime.Now.Date);
 
         public static DateRange PrevMonth => new(Month.From.AddMonths(-1), Month.From.AddDays(-1));
+
+        public static DateRange Empty => new DateRange(isEmpty: true);
 
         private static int ToNormalDayOfWeek(DayOfWeek dayOfWeek)
         {

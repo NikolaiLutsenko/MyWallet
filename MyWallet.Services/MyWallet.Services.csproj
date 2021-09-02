@@ -13,4 +13,8 @@
     <ProjectReference Include="..\MyWallet.Data\MyWallet.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

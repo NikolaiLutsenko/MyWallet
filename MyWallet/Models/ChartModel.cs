@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyWallet.Data.ValueObjects;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace MyWallet.Models

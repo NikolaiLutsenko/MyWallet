@@ -1,9 +1,10 @@
 ﻿using MyWallet.Data.Enums;
+using MyWallet.Data.Interfaces;
 using System;
 
 namespace MyWallet.Data.Entities
 {
-	public class HistoryLineEntity
+	public class HistoryLineEntity: HasCreatedAt, HasCategory
 	{
 		public Guid Id { get; set; }
 

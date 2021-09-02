@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyWallet.Data;
 using MyWallet.Data.Entities;
-using MyWallet.Models;
+using MyWallet.Data.ValueObjects;
 using MyWallet.Services.Dtos;
 using MyWallet.Services.Interfaces;
 using System;

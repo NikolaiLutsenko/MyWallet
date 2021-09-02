@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MyWallet.Data.ValueObjects;
 using MyWallet.Extensions;
 using MyWallet.Models;
 using MyWallet.Services.Interfaces;

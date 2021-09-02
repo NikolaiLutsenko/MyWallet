@@ -1,4 +1,4 @@
-﻿using MyWallet.Models;
+﻿using MyWallet.Data.ValueObjects;
 using MyWallet.Services.Dtos;
 using MyWallet.Services.Interfaces;
 using System;

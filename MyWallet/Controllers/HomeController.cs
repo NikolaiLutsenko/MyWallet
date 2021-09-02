@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using MyWallet.Data.ValueObjects;
 using MyWallet.Extensions;
 using MyWallet.Models;
 using MyWallet.Services.Interfaces;
@@ -75,7 +76,7 @@ namespace MyWallet.Controllers
             var userId = User.GetCurrentUserId();
             var dateRange = new DateRange(from, to);
             var chartInfo = await _chartService.GetChart(userId, dateRange, categoryId);
-            var allTransactions =  await _historyLinesService.GetAll(userId, new DateRange(from, to), categoryId);
+            var allTransactions = await _historyLinesService.GetAll(userId, new DateRange(from, to), categoryId);
             var groupedTransactions = allTransactions
                 .GroupBy(x => x.Date.Date)
                 .Select(x => x.Sum(line => line.Amount))

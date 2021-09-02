@@ -3,14 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using MyWallet.Data;
 using MyWallet.Data.Entities;
 using MyWallet.Data.Enums;
-using MyWallet.Models;
+using MyWallet.Data.Specifications;
+using MyWallet.Data.ValueObjects;
 using MyWallet.Services.Dtos;
 using MyWallet.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MyWallet.Services
@@ -40,28 +39,19 @@ namespace MyWallet.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task<IReadOnlyCollection<HistoryLine>> GetAll(string userId, DateRange dateRange = default, Guid? categoryId = null)
+        public async Task<IReadOnlyCollection<HistoryLine>> GetAll(string userId, DateRange dateRange, Guid? categoryId = null)
         {
+            var specification = new DateRangeSpecification<HistoryLineEntity>(dateRange)
+                .And(new CategorySpecification<HistoryLineEntity>(categoryId));
+
             var lines = await _db.HistoryLines
                 .Include(x => x.Category)
                 .OrderByDescending(x => x.Date)
                 .Where(x => x.Category.IdentityUserId == userId)
-                .Where(DateRangePredicate())
-                .Where(CategoryPredicate())
+                .Where(specification.SpecExpression)
                 .ToArrayAsync();
 
             return _mapper.Map<HistoryLine[]>(lines);
-
-            Expression<Func<HistoryLineEntity, bool>> DateRangePredicate()
-            {
-                return (x) => dateRange.HasFrom ? x.Date.Date >= dateRange.From : false
-                 || !dateRange.HasTo || x.Date.Date <= dateRange.To;
-            }
-
-            Expression<Func<HistoryLineEntity, bool>> CategoryPredicate()
-            {
-                return (x) => !categoryId.HasValue || x.CategoryId == categoryId.Value || x.Category.Parrent.Id == categoryId.Value;
-            }
         }
 
         public async Task Remove(Guid id)

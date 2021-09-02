@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MyWallet.Data.ValueObjects;
 using MyWallet.Extensions;
 using MyWallet.Models;
 using MyWallet.Services.Interfaces;
@@ -31,7 +32,7 @@ namespace MyWallet.Controllers
             var from = DateTime.Now.Date.AddDays(-DateTime.Now.Day + 1);
             var to = DateTime.Now.Date;
             var userId = User.GetCurrentUserId();
-            var lines = await _historyLinesService.GetAll(userId);
+            var lines = await _historyLinesService.GetAll(userId, DateRange.Empty);
 
             var categories = (await _categoryService.GetAll(userId))
                 .Where(x => x.Parrent == null && x.Child.Any())
