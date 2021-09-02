@@ -1,4 +1,4 @@
-﻿{
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -13,19 +13,29 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "MYWALLET_DB_USER": "root",
-        "MYWALLET_DB_USER_PASSWORD": "rootpassword"
+        "MYWALLET_DB_USER_PASSWORD": "rootpassword",
+        "MYWALLET_DB_USER": "root"
       }
     },
     "MyWallet": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "MYWALLET_DB_USER": "root",
-        "MYWALLET_DB_USER_PASSWORD": "rootpassword"
+        "MYWALLET_DB_USER_PASSWORD": "rootpassword",
+        "MYWALLET_DB_USER": "root"
+      },
+      "applicationUrl": "http://localhost:5000",
+      "dotnetRunMessages": "true"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "publishAllPorts": true,
+      "environmentVariables": {
+        "MYWALLET_DB_USER_PASSWORD": "rootpassword",
+        "MYWALLET_DB_USER": "root"
       }
     }
   }
