@@ -12,9 +12,21 @@ namespace MyWallet.Extensions
 {
     public static class DIExtensions
     {
+        private const string MYWALLET_DB_USER = nameof(MYWALLET_DB_USER);
+        private const string MYWALLET_DB_USER_PASSWORD = nameof(MYWALLET_DB_USER_PASSWORD);
+        private const string MYWALLET_DB_PORT = nameof(MYWALLET_DB_PORT);
+
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            var connection = configuration.GetConnectionString("DefaultConnection");
+            var dbUser = Environment.GetEnvironmentVariable(MYWALLET_DB_USER) ?? throw new ArgumentNullException($"There isn't {MYWALLET_DB_USER} environment variable");
+            var dbUserPassword = Environment.GetEnvironmentVariable(MYWALLET_DB_USER_PASSWORD) ?? throw new ArgumentNullException($"There isn't {MYWALLET_DB_USER_PASSWORD} environment variable");
+            if (!Int32.TryParse(Environment.GetEnvironmentVariable(MYWALLET_DB_PORT), out var dbPort))
+                dbPort = 3306;
+
+            var connection = configuration.GetConnectionString("DefaultConnection")
+                .Replace("{user}", dbUser)
+                .Replace("{password}", dbUserPassword)
+                .Replace("{port}", dbPort.ToString());
 
             services.AddDbContext<MyWalletContext>(options =>
                 options.UseMySql(

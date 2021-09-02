@@ -91,7 +91,7 @@ namespace MyWallet.Controllers
                 Amounts = chartInfo.Amounts,
                 AveragePerDay = average,
                 Mediana = groupedTransactions.Length % 2 == 0
-                    ? (groupedTransactions[groupedTransactions.Length / 2] + groupedTransactions[(groupedTransactions.Length / 2) + 1]) / 2
+                    ? (groupedTransactions[groupedTransactions.Length / 2] + groupedTransactions[(groupedTransactions.Length / 2) - 1]) / 2
                     : groupedTransactions[groupedTransactions.Length / 2]
             });
         }
